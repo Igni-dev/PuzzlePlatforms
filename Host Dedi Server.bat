@@ -1,0 +1,1 @@
+"c:\Program Files\UE_4.25\Engine\Binaries\Win64\UE4Editor.exe" "e:\Epic\Project Epic\PuzzlePlatforms\PuzzlePlatforms.uproject" ThirdPersonExampleMap -server -log
