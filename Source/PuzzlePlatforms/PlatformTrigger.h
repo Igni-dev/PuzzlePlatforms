@@ -33,5 +33,8 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* TriggerVolume;
 
+	UPROPERTY(EditAnywhere)
+	TArray<class AMovingPlatformC*>PlatformsToTrigger;
+
 	
 };
