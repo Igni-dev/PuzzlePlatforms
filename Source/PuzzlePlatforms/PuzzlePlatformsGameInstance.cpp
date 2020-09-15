@@ -20,6 +20,9 @@ void UPuzzlePlatformsGameInstance::Host()
 
 	if (!ensure(Engine != nullptr)) return;
 	Engine->AddOnScreenDebugMessage(0, 5.f, FColor::Green,TEXT("Host"));
+	UWorld* World = GetWorld();
+
+	World->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
 }
 
 void UPuzzlePlatformsGameInstance::Join(const FString& Address)
@@ -28,4 +31,6 @@ void UPuzzlePlatformsGameInstance::Join(const FString& Address)
 
 	if (!ensure(Engine != nullptr)) return;
 	Engine->AddOnScreenDebugMessage(0, 5.f, FColor::Green, FString::Printf(TEXT("Joining %s"),*Address));
+	APlayerController* PlayerController = GetFirstLocalPlayerController();
+	PlayerController->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
 }
