@@ -26,6 +26,10 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Custom")
 	void TestReplication();
 private:
+
+	UPROPERTY(EditAnywhere)
+	TArray<class AMovingPlatform*> PlatformToTrigger;
+
 	UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* TriggerVolume;
 
