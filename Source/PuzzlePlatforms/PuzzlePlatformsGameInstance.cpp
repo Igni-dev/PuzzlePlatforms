@@ -24,6 +24,29 @@ void UPuzzlePlatformsGameInstance::Init()
     UE_LOG(LogTemp, Warning, TEXT("igni::Found Class: %s"), *MenuClass->GetName());
 }
 
+void UPuzzlePlatformsGameInstance::LoadMenu()
+{
+    if (!IsValid(MenuClass)) { return; }
+
+    auto UserWidgetMainMenu = CreateWidget<UUserWidget>(this, MenuClass);
+
+    if (!IsValid(UserWidgetMainMenu)) { return; }
+    
+    UserWidgetMainMenu->AddToViewport();
+
+    auto PlayerController = GetFirstLocalPlayerController();
+    if (!IsValid(PlayerController)) { return; }
+
+    FInputModeUIOnly InputModeData;
+    InputModeData.SetWidgetToFocus(UserWidgetMainMenu->TakeWidget());
+    InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+
+    PlayerController->SetInputMode(InputModeData);
+
+    PlayerController->bShowMouseCursor = true;
+
+}
+
 void UPuzzlePlatformsGameInstance::Host()
 {
     auto Engine = GetEngine();
