@@ -22,7 +22,9 @@ public:
 	UFUNCTION(Exec)
 	void Host();
 
-
 	UFUNCTION(Exec)
 	void Join(const FString& Address);
+private:
+	TSubclassOf<class UUserWidget> MenuClass;
+
 };
