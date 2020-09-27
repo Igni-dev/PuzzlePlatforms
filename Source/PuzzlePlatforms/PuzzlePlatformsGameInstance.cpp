@@ -7,6 +7,8 @@
 #include <Blueprint/UserWidget.h>
 #include "PlatformTrigger.h"
 
+#include "MenuSystem/MainMenu.h"
+
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
 {
@@ -28,7 +30,7 @@ void UPuzzlePlatformsGameInstance::LoadMenu()
 {
     if (!IsValid(MenuClass)) { return; }
 
-    auto UserWidgetMainMenu = CreateWidget<UUserWidget>(this, MenuClass);
+    auto UserWidgetMainMenu = CreateWidget<UMainMenu>(this, MenuClass);
 
     if (!IsValid(UserWidgetMainMenu)) { return; }
     
@@ -44,6 +46,8 @@ void UPuzzlePlatformsGameInstance::LoadMenu()
     PlayerController->SetInputMode(InputModeData);
 
     PlayerController->bShowMouseCursor = true;
+    
+    UserWidgetMainMenu->SetMenuInterface(this);
 
 }
 
