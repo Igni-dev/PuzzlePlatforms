@@ -5,6 +5,40 @@
 
 #include <Components/Button.h>
 
+void UMainMenu::Setup()
+{
+    this->AddToViewport();
+
+    auto World = GetWorld();
+    if (!ensure(World)) { return; }
+
+    auto PlayerController = World->GetFirstPlayerController();
+    if (!IsValid(PlayerController)) { return; }
+
+    FInputModeUIOnly InputModeData;
+    InputModeData.SetWidgetToFocus(this->TakeWidget());
+    InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+
+    PlayerController->SetInputMode(InputModeData);
+
+    PlayerController->bShowMouseCursor = true;
+}
+
+void UMainMenu::Teardown()
+{
+    RemoveFromViewport();
+
+    auto World = GetWorld();
+    if (!ensure(World)) { return; }
+
+    auto PlayerController = World->GetFirstPlayerController();
+    if (!IsValid(PlayerController)) { return; }
+
+    FInputModeGameOnly InputModeData;
+    PlayerController->SetInputMode(InputModeData);
+    PlayerController->bShowMouseCursor = false;
+}
+
 bool UMainMenu::Initialize()
 {
     bool Success = Super::Initialize();

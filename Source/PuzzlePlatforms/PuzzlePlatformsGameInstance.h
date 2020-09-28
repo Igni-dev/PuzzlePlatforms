@@ -32,4 +32,5 @@ public:
 private:
 	TSubclassOf<class UMainMenu> MenuClass;
 
+	class UMainMenu* Menu;
 };
