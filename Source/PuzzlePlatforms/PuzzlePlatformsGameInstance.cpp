@@ -8,6 +8,7 @@
 #include "PlatformTrigger.h"
 
 #include "MenuSystem/MainMenu.h"
+#include "MenuSystem/MenuWidget.h"
 
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
@@ -19,11 +20,20 @@ UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitiali
         return;
     }
     MenuClass = MainMenuBPClass.Class;
+
+    ConstructorHelpers::FClassFinder<UUserWidget> InGameMenuBPClass(TEXT("/Game/MenuSystem/WBP_InGameMenu"));
+
+    if (!ensure(InGameMenuBPClass.Class))
+    {
+        return;
+    }
+    InGameMenuClass = InGameMenuBPClass.Class;
 }
 
 void UPuzzlePlatformsGameInstance::Init()
 {
-    UE_LOG(LogTemp, Warning, TEXT("igni::Found Class: %s"), *MenuClass->GetName());
+    UE_LOG(LogTemp, Warning, TEXT("igni::Found Class_1: %s"), *MenuClass->GetName());
+    UE_LOG(LogTemp, Warning, TEXT("igni::Found Class_2: %s"), *InGameMenuClass->GetName());
 }
 
 void UPuzzlePlatformsGameInstance::LoadMenu()
@@ -38,6 +48,19 @@ void UPuzzlePlatformsGameInstance::LoadMenu()
     
     Menu->SetMenuInterface(this);
 
+}
+
+void UPuzzlePlatformsGameInstance::InGameLoadMenu()
+{
+    if (!IsValid(InGameMenuClass)) { return; }
+
+    UMenuWidget* InGameMenu = CreateWidget<UMenuWidget>(this, InGameMenuClass);
+
+    if (!IsValid(InGameMenu)) { return; }
+
+    InGameMenu->Setup();
+
+    InGameMenu->SetMenuInterface(this);
 }
 
 void UPuzzlePlatformsGameInstance::Host()
@@ -55,10 +78,8 @@ void UPuzzlePlatformsGameInstance::Host()
     Engine->AddOnScreenDebugMessage(0, 2, FColor::Green, TEXT("Hosting"));
 
     UWorld* World = GetWorld();
-    if (!ensure(World))
-    {
-        return;
-    }
+    if (!ensure(World)) { return; }
+
     World->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
 }
 
@@ -77,4 +98,14 @@ void UPuzzlePlatformsGameInstance::Join(const FString& Address)
         return;
     }
     PlayerController->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
+}
+
+void UPuzzlePlatformsGameInstance::LoadMainMenu()
+{
+    APlayerController* PlayerController = GetFirstLocalPlayerController();
+    if (!ensure(PlayerController))
+    {
+        return;
+    }
+    PlayerController->ClientTravel("/Game/MenuSystem/MainMenu", ETravelType::TRAVEL_Absolute);
 }

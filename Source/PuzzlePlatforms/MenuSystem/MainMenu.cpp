@@ -4,40 +4,9 @@
 #include "MainMenu.h"
 
 #include <Components/Button.h>
+#include <Components/WidgetSwitcher.h>
+#include <Components/EditableTextBox.h>
 
-void UMainMenu::Setup()
-{
-    this->AddToViewport();
-
-    auto World = GetWorld();
-    if (!ensure(World)) { return; }
-
-    auto PlayerController = World->GetFirstPlayerController();
-    if (!IsValid(PlayerController)) { return; }
-
-    FInputModeUIOnly InputModeData;
-    InputModeData.SetWidgetToFocus(this->TakeWidget());
-    InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-
-    PlayerController->SetInputMode(InputModeData);
-
-    PlayerController->bShowMouseCursor = true;
-}
-
-void UMainMenu::Teardown()
-{
-    RemoveFromViewport();
-
-    auto World = GetWorld();
-    if (!ensure(World)) { return; }
-
-    auto PlayerController = World->GetFirstPlayerController();
-    if (!IsValid(PlayerController)) { return; }
-
-    FInputModeGameOnly InputModeData;
-    PlayerController->SetInputMode(InputModeData);
-    PlayerController->bShowMouseCursor = false;
-}
 
 bool UMainMenu::Initialize()
 {
@@ -45,9 +14,24 @@ bool UMainMenu::Initialize()
     if (!Success) { return false; }
 
     if (!IsValid(Host) && !IsValid(Join)) { return false; }
+    Exit->OnClicked.AddDynamic(this, &UMainMenu::ExitPressed);
     Host->OnClicked.AddDynamic(this, &UMainMenu::HostServer);
+    Join->OnClicked.AddDynamic(this, &UMainMenu::OpenJoinMenu);
+    Back->OnClicked.AddDynamic(this, &UMainMenu::BackToMainMenu);
+    ConfirmJoin->OnClicked.AddDynamic(this, &UMainMenu::JoinServer);
 
     return true;
+}
+
+void UMainMenu::ExitPressed()
+{
+    auto World = GetWorld();
+    if (!ensure(World)) { return; }
+
+    auto PlayerController = World->GetFirstPlayerController();
+    if (!IsValid(PlayerController)) { return; }
+
+    PlayerController->ConsoleCommand("quit");
 }
 
 void UMainMenu::HostServer()
@@ -60,7 +44,26 @@ void UMainMenu::HostServer()
     }
 }
 
-void UMainMenu::SetMenuInterface(IMenuInterface* MInterface)
+void UMainMenu::JoinServer()
 {
-    MenuInterface = MInterface;
+    UE_LOG(LogTemp, Warning, TEXT("I'm gonna join to server"));
+
+    if (MenuInterface)
+    {
+        FString Address = IPAddressField->GetText().ToString();
+        MenuInterface->Join(Address);
+    }
 }
+
+void UMainMenu::OpenJoinMenu()
+{
+    if (!IsValid(MenuSwitcher) && !IsValid(JoinMenu)) { return; }
+    MenuSwitcher->SetActiveWidget(JoinMenu);
+}
+
+void UMainMenu::BackToMainMenu()
+{
+    if (!IsValid(MenuSwitcher) && !IsValid(MainMenu)) { return; }
+    MenuSwitcher->SetActiveWidget(MainMenu);
+}
+
