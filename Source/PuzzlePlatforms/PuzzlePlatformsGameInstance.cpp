@@ -36,7 +36,7 @@ void UPuzzlePlatformsGameInstance::Init()
 
     IOnlineSubsystem* SubSystem = IOnlineSubsystem::Get();
     if (!SubSystem) {
-        UE_LOG(LogTemp, Warning, TEXT("igni::No found SubSystem."));
+        UE_LOG(LogTemp, Warning, TEXT("igni::No found OnlineSubSystem."));
         return;
     }
     //UE_LOG(LogTemp, Warning, TEXT("igni::Found SessionInterface: %s"), *SubSystem->GetSubsystemName().ToString());
