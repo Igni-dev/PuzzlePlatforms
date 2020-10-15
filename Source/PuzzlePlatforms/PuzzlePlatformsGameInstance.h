@@ -2,6 +2,10 @@
 
 #pragma once
 
+#include <OnlineSubsystem.h>
+#include <OnlineSessionSettings.h>
+#include <Interfaces/OnlineSessionInterface.h>
+
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "MenuSystem/MenuInterface.h"
@@ -39,4 +43,7 @@ private:
 	TSubclassOf<class UUserWidget> InGameMenuClass;
 
 	class UMainMenu* Menu;
+
+	IOnlineSessionPtr SessionInterface;
+	void OnCreateSessionComplete(FName SessionName, bool Succes);
 };
